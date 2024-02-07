@@ -17,19 +17,17 @@ def read_root():
     return {"Hello": "World"}
 
 
+
 @app.post("/face-compare")
 async def face_compare(face1: Annotated[str, Form()], face2: Annotated[str, Form()]):
     dlib.DLIB_USE_CUDA = True
-    if not face1 or not face2:
-        return {'error': 'Two face images are required.'}
-    # face2_bytes = face2.file.read()
-    # np_array = np.frombuffer(face2_bytes, np.uint8)
-    # img = cv2.imdecode(np_array, cv2.IMREAD_COLOR)
-    # gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    # fm = cv2.Laplacian(gray, cv2.CV_64F).var()
-    # print(fm)
-    # if fm < 100: 
-    #     return {'error': 'Yuz sifati bilan muommo yuzaga keldi, iltimos kameraga yuzingizni qarating!'}
+    face2_bytes = open(face2, 'rb')
+    np_array = np.frombuffer(face2_bytes.read(), np.uint8)
+    img = cv2.imdecode(np_array, cv2.IMREAD_COLOR)
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    fm = cv2.Laplacian(gray, cv2.CV_64F).var()
+    if fm < 100: 
+        return {'error': 'Yuz sifati bilan muommo yuzaga keldi, iltimos kameraga yuzingizni qarating!'}
     # Load face images
     image1 = face_recognition.load_image_file(face1)
     image2 = face_recognition.load_image_file(face2)
